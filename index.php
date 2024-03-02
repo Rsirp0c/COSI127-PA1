@@ -11,61 +11,69 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .container {
+            width: 80%; /* Adjust width as needed */
+            margin: 0 auto; /* Center the container horizontally */
+            text-align: left; /* Align the content inside the container to the right */
+        }
+    </style>
     <title>COSI 127b</title>
 </head>
 <body>
     <div class="container">
-        <h1 style="text-align:center">COSI 127b</h1><br>
-        <h3 style="text-align:center">Connecting Front-End to MySQL DB</h3><br>
+        <h1>COSI 127b</h1>
+        <h3>Connecting Front-End to MySQL DB</h3><br>
     </div>
     <div class="container">
+
         <form id="likeMovieForm" method="post" action="index.php">
-            <input type="text" name="user_id" placeholder="Your ID">
+            <input type="text" name="user_email" placeholder="Your email">
             <input type="text" name="movie_id" placeholder="Movie ID">
             <button type="submit" name="like_movie">Like this movie</button>
         </form>
+
         <form action="index.php" method="post">
             <br>
             <button type="submit" name="viewMovies" value="viewMovies">View All Movies</button>
             <button type="submit" name="viewActors" value="viewActors">View All Actors</button>
-        </form>
-        <br>
+        </form><br>
+        
         <form id="likeMovieForm" method="post" action="index.php">
-            <h6 >Write your own query</h6>
-            <textarea id="freeform" name="freeform" rows="4" cols="80">
-            </textarea>
+            <h6>Write your own query</h6>
+            <textarea id="freeform" name="freeform" rows="4" cols="80"></textarea>
+            <br>
             <button type="submit" name="own_query">run your query</button>
-        </form>
+        </form><br>
+       
     </div>
     
-    <div class="container">
-        <h1>Result</h1>
-        <?php
-        if(isset($_POST['like_movie'])){
-           $liked_movie = TRUE;
-           $user_id = $_POST["user_id"]; 
-           $movie_id = $_POST["movie_id"]; 
-        }else{
-            $liked_movie = FALSE;
-        }
+    <div class="container" style='width:100%; text-align:center;'>
 
-        if (isset($_POST['viewMovies'])) {
-            $query = "SELECT * FROM Movie JOIN MotionPicture ON Movie.mpid = MotionPicture.id;";
+        <?php 
+
+        if(isset($_POST['like_movie'])){
+            $user_email = $_POST["user_email"]; 
+            $movie_id = $_POST['movie_id'];
+            $query = "INSERT INTO `Likes` (`uemail`, `mpid`) VALUES ('$user_email', $movie_id)";
+        } elseif (isset($_POST['viewMovies'])) {
+            $query = "SELECT mp.*, m.boxoffice_collection FROM Movie m
+                        JOIN MotionPicture mp
+                        ON m.mpid = mp.id;";
         } elseif (($_POST['viewActors'])) {
-            $query = "SELECT * FROM Role r JOIN MotionPicture mp ON r.mpid = mp.id JOIN People p ON r.pid = p.id ";
+            $query = "SELECT p.*, mp.name as Movie_Name FROM Role r 
+                        JOIN MotionPicture mp 
+                        ON r.mpid = mp.id 
+                        JOIN People p ON r.pid = p.id ";
+        } elseif (isset($_POST['own_query'])){
+            $query = $_POST["freeform"];
         } else {
             $query = null;
         }
-
-        // we will now create a table from PHP side 
+        
         echo "<table class='table table-md table-bordered'>";
         echo "<thead class='thead-dark' style='text-align: center'>";
 
-        // initialize table headers
-        // YOU WILL NEED TO CHANGE THIS DEPENDING ON TABLE YOU QUERY OR THE COLUMNS YOU RETURN
-        //echo "<tr><th class='col-md-2'>Firstname</th><th class='col-md-2'>Lastname</th></tr></thead>";
-
-        // generic table builder. It will automatically build table data rows irrespective of result
         class TableRows extends RecursiveIteratorIterator {
             function __construct($it) {
                 parent::__construct($it, self::LEAVES_ONLY);
@@ -74,35 +82,29 @@
             function current() {
                 return "<td style='text-align:center'>" . parent::current(). "</td>";
             }
-
+        
             function beginChildren() {
                 echo "<tr>";
             }
-
+        
             function endChildren() {
                 echo "</tr>" . "\n";
             }
         }
-
-        // SQL CONNECTIONS
+        
         $servername = "localhost";
         $username = "root";
         $password = "";
         $dbname = "COSI127b";
-
+        
         try {
-            // We will use PDO to connect to MySQL DB. This part need not be 
-            // replicated if we are having multiple queries. 
-            // initialize connection and set attributes for errors/exceptions
             $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-            // prepare statement for executions. This part needs to change for every query
+        
             $stmt = $conn->prepare($query);
-
-            // execute statement
+        
             $stmt->execute();
-
+        
             $columnCount = $stmt->columnCount();
             $columnNames = array();
             for ($i = 0; $i < $columnCount; $i++) {
@@ -115,24 +117,18 @@
             }
             echo "</tr>";
             echo "</thead>";
-                
-            // set the resulting array to associative. 
+             
             $result = $stmt->setFetchMode(PDO::FETCH_ASSOC);
-
-            // for each row that we fetched, use the iterator to build a table row on front-end
             foreach(new TableRows(new RecursiveArrayIterator($stmt->fetchAll())) as $k=>$v) {
                 echo $v;
             }
-        }
-        catch(PDOException $e) {
+        } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
         }
+        
         echo "</table>";
-        // destroy our connection
-        $conn = null;
-    
-    ?>
-
+        $conn = null;       // destroy our connection
+        ?>
     </div>
 </body>
 </html>
