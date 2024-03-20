@@ -12,4 +12,4 @@
 - Open the web browser and go to `localhost/COSI127b/pa1`
   
 
-<img width="840"  src="https://github.com/Rsirp0c/COSI127-PA1/blob/main/Screenshot.png">
+<img width="600"  src="https://github.com/Rsirp0c/COSI127-PA1/blob/main/Screenshot.png">
