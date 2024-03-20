@@ -10,3 +10,6 @@
 - Create a new directory called **COSI127b** under `htdocs/` and under that, create another subdirectory called `pa1/`.
 - Place the `index.php` file in the pa1/ directory.
 - Open the web browser and go to `localhost/COSI127b/pa1`
+  
+
+<img width="840"  src="https://github.com/Rsirp0c/COSI127-PA1/blob/main/Screenshot.png">
