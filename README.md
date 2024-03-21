@@ -13,6 +13,7 @@
 
 ## Database Schema is below:
 <img width="400"  src="https://github.com/Rsirp0c/COSI127-PA1/blob/main/Screenshot.png">
+
 - MotionPicture (id, name, rating, production, budget)
 - User (email, name, age)
 - Likes (mpid, uemail)
