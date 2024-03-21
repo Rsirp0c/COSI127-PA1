@@ -13,3 +13,14 @@
 
 ## Database Schema is below:
 <img width="400"  src="https://github.com/Rsirp0c/COSI127-PA1/blob/main/Screenshot.png">
+- MotionPicture (id, name, rating, production, budget)
+- User (email, name, age)
+- Likes (mpid, uemail)
+- Movie (mpid, boxoffice_collection)
+- Series (mpid, season_count)
+- People (id, name, nationality, dob, gender)
+- Role (mpid, pid, role_name)
+- Award (mpid, pid, award_name, award_year)
+- Genre (mpid, genre_name)
+- Location (mpid, zip, city, country)
+
